@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "description": "",
   "main": "gruntfile.js",
-
   "author": "Vitali Perchonok <vitali.pe@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "shelljs": "^0.5.3"
+    "shelljs": "^0.5.3",
+    "lodash": "~3.10.1",
+    "grunt-contrib-concat": "~0.5.1",
+    "grunt-contrib-clean": "~0.7.0"
   }
 }

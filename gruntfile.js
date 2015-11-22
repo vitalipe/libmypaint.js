@@ -1,50 +1,51 @@
-var path = require("path");
-var shell = require('shelljs');
 
 
 module.exports = function(grunt) {
 
-    var C_CONFIG = {
-        "COMPILER" : "emcc",
-        "MAIN" : path.join("src", "native", "main.c"),
-        "BIN" : path.join("bin", "lib.js"),
-        "FLAGS" : ["-Wall"],
-        "LIBS" : [path.join("src", "native", "libmypaint")],
-        "OPTIONS" : {
-            "EXPORTED_FUNCTIONS" : "\"['_main']\"",
-            "NO_EXIT_RUNTIME" : "1",
-            "RESERVED_FUNCTION_POINTERS" : "2"
+
+    grunt.initConfig({
+        "emcc" : {
+            libmypaint : {
+                main : "src/native/main.c",
+                bin : "bin/libmypaint.js",
+                flags : ["-Wall"],
+                libs : ["src/native/libmypaint"],
+                "options" : {
+                    "EXPORTED_FUNCTIONS" : "\"['_main']\"",
+                    "NO_EXIT_RUNTIME" : "1",
+                    "RESERVED_FUNCTION_POINTERS" : "1"
+                },
+
+                "wrapper" : {
+                    head :  "bin/_header",
+                    tail :  "bin/_footer"
+                }
+            }
+        },
+
+        clean : ["bin/*", "!bin/.gitkeep"],
+
+        concat : {
+            header : {
+                src: ["src/_UMD/_header"],
+                dest: "bin/_header"
+            },
+
+            footer : {
+                src: ["src/js/libmypaint.js", "src/_UMD/_footer"],
+                dest: "bin/_footer"
+            }
         }
-    };
-    
-    var exec = function(cmd, failError) {
-        var result = shell.exec(cmd, {silent: false});
-
-        if (result.code !== 0)
-            grunt.fail.fatal(failError);
-    };
-
-    var parseOptions = function(options) {
-        return Object.keys(options).map(function(option) { 
-            return "-s " + option + "=" + options[option] 
-        }).join(" ");
-    };
-
-    var tasks = {
-        "build-libmypaint" : function() {
-            var cmd = [];
-            var options = parseOptions(C_CONFIG.OPTIONS);
-
-            cmd.push(C_CONFIG.COMPILER);
-            cmd.push(C_CONFIG.MAIN);
-            cmd.push(C_CONFIG.LIBS.map(function(lib) { return "-I " + lib }).join(" "));
-            cmd.push("-o " + C_CONFIG.BIN);
-            cmd.push(options);
-
-            exec(cmd.join(" "), "failed to compile...")
-        }
-    };
+    });
 
 
-    grunt.registerTask("build", tasks["build-libmypaint"]);
+    // load
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+
+    grunt.task.loadTasks("./tasks");
+
+
+    // register
+    grunt.registerTask("build", ["clean", "concat:header", "concat:footer", "emcc:libmypaint"]);
 };
