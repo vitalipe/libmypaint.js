@@ -4,6 +4,10 @@
 
 
 
+int ping(int id) {
+	printf("%s %d \n", "test", id);
+	return 42;
+}
 
 
 int main() {

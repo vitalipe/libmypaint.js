@@ -7,18 +7,16 @@ module.exports = function(grunt) {
         "emcc" : {
             libmypaint : {
                 main : "src/native/main.c",
-                bin : "bin/libmypaint.js",
+                bin : "bin/lib.js",
                 flags : ["-Wall"],
                 libs : ["src/native/libmypaint"],
+                optimization : "O0",
                 "options" : {
-                    "EXPORTED_FUNCTIONS" : "\"['_main']\"",
+                    "EXPORTED_FUNCTIONS" : "\"['_main','_ping']\"",
                     "NO_EXIT_RUNTIME" : "1",
-                    "RESERVED_FUNCTION_POINTERS" : "1"
-                },
-
-                "wrapper" : {
-                    head :  "bin/_header",
-                    tail :  "bin/_footer"
+                    "RESERVED_FUNCTION_POINTERS" : "1",
+                    "NO_FILESYSTEM" : "1",
+                    "MODULARIZE" : "1"
                 }
             }
         },
@@ -26,14 +24,15 @@ module.exports = function(grunt) {
         clean : ["bin/*", "!bin/.gitkeep"],
 
         concat : {
-            header : {
-                src: ["src/_UMD/_header"],
-                dest: "bin/_header"
+
+            js : {
+                src: ["src/js/Api.js", "src/js/MyPaintSurface.js"],
+                dest: "bin/wrapper.js"
             },
 
-            footer : {
-                src: ["src/js/libmypaint.js", "src/_UMD/_footer"],
-                dest: "bin/_footer"
+            umd : {
+                src: ["src/_UMD/_header", "bin/lib.js", "bin/wrapper.js", "src/_UMD/_footer"],
+                dest: "bin/libmypaint.js"
             }
         }
     });
@@ -47,5 +46,5 @@ module.exports = function(grunt) {
 
 
     // register
-    grunt.registerTask("build", ["clean", "concat:header", "concat:footer", "emcc:libmypaint"]);
+    grunt.registerTask("build", ["clean", "emcc:libmypaint", "concat:js", "concat:umd"]);
 };
