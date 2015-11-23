@@ -7,6 +7,6 @@
         factory(exports);
     } else {
         // Browser globals
-        factory((root.commonJsStrict = {}));
+        factory((root.libmypaint = {}));
     }
 }(this, function (exports) {
