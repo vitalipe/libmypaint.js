@@ -11,6 +11,7 @@ module.exports = function(grunt) {
         "bin" : "a.out",
         "flags" : [],
         "libs" : [],
+        "optimization" : "O0",
         "options" : {},
 
         "wrapper" : {
@@ -40,6 +41,7 @@ module.exports = function(grunt) {
         cmd.push(config.main);
         cmd.push(config.libs.map(function(lib) { return "-I " + lib }).join(" "));
         cmd.push("-o " + config.bin);
+        cmd.push("-" + config.optimization);
 
         if (config.wrapper.head) cmd.push("--pre-js " + config.wrapper.head);
         if (config.wrapper.tail) cmd.push("--post-js " + config.wrapper.tail);
