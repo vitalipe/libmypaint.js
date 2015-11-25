@@ -12,9 +12,9 @@ module.exports = function(grunt) {
                 libs : ["src/native/libmypaint"],
                 optimization : "O0",
                 "options" : {
-                    "EXPORTED_FUNCTIONS" : "\"['_main','_ping']\"",
+                    "EXPORTED_FUNCTIONS" : "\"['_main','_register_callbacks']\"",
                     "NO_EXIT_RUNTIME" : "1",
-                    "RESERVED_FUNCTION_POINTERS" : "1",
+                    "RESERVED_FUNCTION_POINTERS" : "2",
                     "NO_FILESYSTEM" : "1",
                     "MODULARIZE" : "1"
                 }
