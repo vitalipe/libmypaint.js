@@ -31,11 +31,11 @@ static void proxy_surface_get_color(
 
 
 
-void proxy_surface_init(ProxySurface* self,
+ProxySurface* proxy_surface_new(
     DrawDabFunctionCallback draw_dab_cb,
     GetColorFunctionCallback get_color_cb)
 {
-
+    ProxySurface* self = (ProxySurface*) malloc(sizeof(ProxySurface));
     mypaint_surface_init(&(self->parent));
 
     self->parent.draw_dab = proxy_surface_draw_dab;
@@ -43,4 +43,6 @@ void proxy_surface_init(ProxySurface* self,
 
     self->draw_dab_cb = draw_dab_cb;
     self->get_color_cb = get_color_cb;
+
+    return self;
 }

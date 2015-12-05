@@ -1,26 +1,29 @@
-exports.MyPaintSurface = (function(Api) {
 
 
-    function _getColor(ctx, x,y, radius) {
-        return [1,1,1,1];
-    }
+var Api = (function(EmModuleFactory) {
 
-    function _drawDab(ctx) {
-        console.log("FIXME");
-    }
 
-    var MyPaintSurface = function(ctx) {
-        this._ctx = ctx;
-        this._Api =  new Api(_drawDab.bind(ctx), _getColor.bind(ctx));
+
+    var createGetColorProxy = function(EM_Module, getColor) {
+
+        return function(x, y, radius, r_ptr, g_ptr, b_ptr, a_ptr) {
+            var result = getColor(x,y,radius);
+
+            EM_Module.setValue(r_ptr, result[0], "float");
+            EM_Module.setValue(g_ptr, result[1], "float");
+            EM_Module.setValue(b_ptr, result[2], "float");
+            EM_Module.setValue(a_ptr, result[3], "float");
+        };
     };
 
-    MyPaintSurface.prototype.startStroke = function(brush, x, y) {};
-    MyPaintSurface.prototype.strokeAt = function(x, y) {};
 
+    return function(drawDab, getColor) {
+        var EM_Module = EmModuleFactory();
 
-    return MyPaintSurface;
+        var colorProxyPtr = EM_Module.Runtime.addFunction(createGetColorProxy(EM_Module, getColor));
+        var drawDabProxyPtr = EM_Module.Runtime.addFunction(drawDab);
 
-})(Api);
+        EM_Module.ccall("register_callbacks", "void", ["number", "number"], [drawDabProxyPtr, colorProxyPtr]);
+    };
 
-
-
+})(Module);

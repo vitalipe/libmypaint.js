@@ -24,13 +24,10 @@ typedef int (*DrawDabFunctionCallback) (
 );
 
 
-void proxy_surface_init(
-	ProxySurface* self,
+ProxySurface* proxy_surface_new(
 	DrawDabFunctionCallback draw_dab_cb,
 	GetColorFunctionCallback get_color_cb
 );
-
-
 
 struct _ProxySurface {
 	MyPaintSurface parent;

@@ -6,22 +6,25 @@
 
 
 
-static ProxySurface surface;
+static ProxySurface* surface;
+static MyPaintBrush* brush;
 
 
-void register_callbacks(DrawDabFunctionCallback  draw_dab_cb, GetColorFunctionCallback get_color_cb) {
-	float r, g, b, a;
-
-    proxy_surface_init(&surface, draw_dab_cb, get_color_cb);
-
-	// call for simple testing
-	surface.parent.get_color((MyPaintSurface*) &surface, 100, 200, 42, &r, &g, &b, &a);
-	//draw_dab_cb(100,200,0.1,100,200,100,1,1,0,1,0.1,1,1);
-
-	printf("got RGBA(%f, %f, %f, %f) \n", r,g,b,a);
+void new_stroke() {
+	mypaint_brush_reset(brush);
 }
 
+void stroke_at(float x, float y, double dtime) {
+	mypaint_brush_stroke_to(brush, (MyPaintSurface*) surface, x, y, 1, 0, 0, dtime);
+}
 
-int main() {
+void init(DrawDabFunctionCallback  draw_dab_cb, GetColorFunctionCallback get_color_cb) {
+	surface = proxy_surface_new(draw_dab_cb, get_color_cb);
+	brush = mypaint_brush_new();
 
+	// set dummy brush data for now...
+	mypaint_brush_from_defaults(brush);
+	mypaint_brush_set_base_value(brush, MYPAINT_BRUSH_SETTING_COLOR_H, 1.0);
+	mypaint_brush_set_base_value(brush, MYPAINT_BRUSH_SETTING_COLOR_S, 0.5);
+	mypaint_brush_set_base_value(brush, MYPAINT_BRUSH_SETTING_COLOR_V, 0.4);
 }
