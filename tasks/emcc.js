@@ -7,13 +7,13 @@ module.exports = function(grunt) {
 
     const defaults = {
         "compiler" : "emcc",
-        "main" : "main.c",
-        "bin" : "a.out",
+        "main" : "",
+        "bin" : "",
         "flags" : [],
         "libs" : [],
         "optimization" : "O0",
+        "args" : [],
         "options" : {},
-
         "wrapper" : {
             head :  undefined,
             tail :  undefined
@@ -28,8 +28,8 @@ module.exports = function(grunt) {
     };
 
     var parseOptions = function(options) {
-        return Object.keys(options).map(function(option) { 
-            return "-s " + option + "=" + options[option] 
+        return Object.keys(options).map(function(option) {
+            return "-s " + option + "=" + options[option]
         }).join(" ");
     };
 
@@ -42,6 +42,8 @@ module.exports = function(grunt) {
         cmd.push(config.libs.map(function(lib) { return "-I " + lib }).join(" "));
         cmd.push("-o " + config.bin);
         cmd.push("-" + config.optimization);
+        cmd.push(config.args.join(" "));
+
 
         if (config.wrapper.head) cmd.push("--pre-js " + config.wrapper.head);
         if (config.wrapper.tail) cmd.push("--post-js " + config.wrapper.tail);

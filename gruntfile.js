@@ -11,12 +11,14 @@ module.exports = function(grunt) {
                 flags : ["-Wall"],
                 libs : ["src/native/libmypaint"],
                 optimization : "O0",
-                "options" : {
-                    "EXPORTED_FUNCTIONS" : "\"['_main','_register_callbacks']\"",
+                args : ["--memory-init-file 0"],
+                options : {
+                    "EXPORTED_FUNCTIONS" : "\"['_new_stroke', '_stroke_at','_init']\"",
                     "NO_EXIT_RUNTIME" : "1",
                     "RESERVED_FUNCTION_POINTERS" : "2",
                     "NO_FILESYSTEM" : "1",
-                    "MODULARIZE" : "1"
+                    "MODULARIZE" : "1",
+                    "NO_BROWSER" : "1"
                 }
             }
         },
@@ -26,7 +28,7 @@ module.exports = function(grunt) {
         concat : {
 
             js : {
-                src: ["src/js/Api.js", "src/js/MyPaintSurface.js"],
+                src: ["src/js/common.js", "src/js/MyPaintSurface.js", "src/js/MyPaintCanvasSurface.js", "src/js/_exports.js"],
                 dest: "bin/wrapper.js"
             },
 
