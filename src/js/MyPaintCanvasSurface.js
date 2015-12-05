@@ -1,26 +1,36 @@
-exports.MyPaintSurface = (function(Api) {
+var MyPaintCanvasSurface = (function(MyPaintSurface) {
 
 
-    function _getColor(ctx, x,y, radius) {
-        return [1,1,1,1];
+    function getColor(x,y, radius) {
+
+	    var image = this.getImageData(x, y, 1, 1);
+        var pixel = image.data;
+
+        pixel[0] /= 255;
+        pixel[1] /= 255;
+        pixel[2] /= 255;
+        pixel[3] /= 255;
+
+        console.log("color", pixel);
+        return pixel;
     }
 
-    function _drawDab(ctx) {
-        console.log("FIXME");
+    function drawDab(x,y,radius,r,g,b, opaque,hardness,alpha_eraser, aspect_ratio, angle, lock_alpha, colorize) {
+        // todo
     }
 
-    var MyPaintSurface = function(ctx) {
-        this._ctx = ctx;
-        this._Api =  new Api(_drawDab.bind(ctx), _getColor.bind(ctx));
+
+    var MyPaintCanvasSurface = function(ctx) {
+        ctx = isFunction(ctx.getContext) ? ctx.getContext("2d") : ctx;
+
+        // call parent constructor
+        MyPaintSurface.call(this, bind(drawDab, ctx), bind(getColor, ctx));
     };
 
-    MyPaintSurface.prototype.startStroke = function(brush, x, y) {};
-    MyPaintSurface.prototype.strokeAt = function(x, y) {};
+    MyPaintCanvasSurface.prototype = Object.create(MyPaintSurface.prototype);
+    MyPaintCanvasSurface.prototype.constructor = MyPaintCanvasSurface;
 
 
-    return MyPaintSurface;
+    return MyPaintCanvasSurface;
 
-})(Api);
-
-
-
+})(MyPaintSurface);
