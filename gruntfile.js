@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 optimization : "O0",
                 args : ["--memory-init-file 0"],
                 options : {
-                    "EXPORTED_FUNCTIONS" : "\"['_new_stroke', '_stroke_at','_init']\"",
+                    "EXPORTED_FUNCTIONS" : "\"['_new_stroke', '_stroke_at','_init', '_set_brush_base_value', '_set_brush_mapping_n', '_set_brush_mapping_point']\"",
                     "NO_EXIT_RUNTIME" : "1",
                     "RESERVED_FUNCTION_POINTERS" : "2",
                     "NO_FILESYSTEM" : "1",
