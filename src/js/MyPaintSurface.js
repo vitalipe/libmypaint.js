@@ -26,7 +26,7 @@ var MyPaintSurface = (function(EmModuleFactory) {
             EM_Module : EM_Module,
 
             new_stroke : EM_Module.cwrap("new_stroke"),
-            stroke_at : EM_Module.cwrap("stroke_at", "void", ["number", "number", "number"]),
+            stroke_at : EM_Module.cwrap("stroke_at", "void", ["number", "number", "number", "number", "number", "number"]),
 
             set_brush_base_value : EM_Module.cwrap("set_brush_base_value", "void", ["string", "number"]),
             set_brush_mapping_n : EM_Module.cwrap("set_brush_mapping_n", "void", ["string", "string", "number"]),
@@ -37,7 +37,6 @@ var MyPaintSurface = (function(EmModuleFactory) {
 
     var MyPaintSurface = function(drawDab, getColor) {
         this._bindings = setupEmscriptenBindings(drawDab, getColor);
-        this._lastStroke = null;
     };
 
     MyPaintSurface.prototype.setBrush = function(brush) {
@@ -60,19 +59,18 @@ var MyPaintSurface = (function(EmModuleFactory) {
         return this;
     };
 
-    MyPaintSurface.prototype.newStroke = function(x,y) {
-        this._lastStroke = Date.now();
+    MyPaintSurface.prototype.newStroke = function() {
         this._bindings.new_stroke();
-        this._bindings.stroke_at(x,y, 1);
-
         return this;
     }
 
-    MyPaintSurface.prototype.strokeAt = function(x,y, dt) {
-        var now = Date.now();
-        this._bindings.stroke_at(x,y, 0.1);
-        this._lastStroke = now;
+    MyPaintSurface.prototype.stroke = function(x,y, dt, pressure, xtilt, ytilt) {
+        pressure = (pressure || 0.4);
+        xtilt = (xtilt || 0.0);
+        ytilt = (ytilt || 0.0);
+        dt = (dt || 0.1);
 
+        this._bindings.stroke_at(x,y, pressure, xtilt, ytilt, dt);
         return this;
     }
 

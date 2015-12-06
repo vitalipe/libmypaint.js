@@ -36,8 +36,8 @@ void new_stroke() {
 	mypaint_brush_reset(brush);
 }
 
-void stroke_at(float x, float y, double dtime) {
-	mypaint_brush_stroke_to(brush, (MyPaintSurface*) surface, x, y, 1, 0, 0, dtime);
+void stroke_at(float x, float y, float pressure, float xtilt, float ytilt, double dtime) {
+	mypaint_brush_stroke_to(brush, (MyPaintSurface*) surface, x, y, pressure, xtilt, ytilt, dtime);
 }
 
 void init(DrawDabFunctionCallback  draw_dab_cb, GetColorFunctionCallback get_color_cb) {
