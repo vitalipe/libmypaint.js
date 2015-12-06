@@ -56,7 +56,7 @@ var MyPaintSurface = (function(EmModuleFactory) {
 
         });
 
-        return this;
+        return this.newStroke();
     };
 
     MyPaintSurface.prototype.newStroke = function() {
