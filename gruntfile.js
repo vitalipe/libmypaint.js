@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 optimization : "O0",
                 args : ["--memory-init-file 0"],
                 options : {
-                    "EXPORTED_FUNCTIONS" : "\"['_new_stroke', '_stroke_at','_init', '_set_brush_base_value', '_set_brush_mapping_n', '_set_brush_mapping_point', '_new_brush']\"",
+                    "EXPORTED_FUNCTIONS" : "\"['_new_stroke', '_stroke_at','_init', '_set_brush_base_value', '_set_brush_mapping_n', '_set_brush_mapping_point']\"",
                     "NO_EXIT_RUNTIME" : "1",
                     "RESERVED_FUNCTION_POINTERS" : "2",
                     "NO_FILESYSTEM" : "1",
@@ -35,6 +35,16 @@ module.exports = function(grunt) {
             umd : {
                 src: ["src/_UMD/_header", "bin/lib.js", "bin/wrapper.js", "src/_UMD/_footer"],
                 dest: "bin/libmypaint.js"
+            },
+
+            brushes : {
+                options : {
+                    banner : "/* generated with 'grunt build-brushes' */ \n\n var brushes = [",
+                    footer : "]",
+                    separator : " , "
+                },
+                src : ["test/brushes/*/*.myb"],
+                dest : "test/brushes/all-brushes.js"
             }
         }
     });
@@ -46,7 +56,7 @@ module.exports = function(grunt) {
 
     grunt.task.loadTasks("./tasks");
 
-
     // register
     grunt.registerTask("build", ["clean", "emcc:libmypaint", "concat:js", "concat:umd"]);
+    grunt.registerTask("build-brushes", ["concat:brushes"]);
 };

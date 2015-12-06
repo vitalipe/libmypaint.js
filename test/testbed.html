@@ -1,10 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>libmypaint.js testbed</title>
-    <script src="../bin/libmypaint.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>libmypaint.js testbed</title>
+
+  <script src="../bin/libmypaint.js"></script>
+  <script src="brushes/all-brushes.js"></script>
+  <script src="InputHandler.js"></script>
+
+
+
 </head>
 <body>
+  <script>
+    document.body.addEventListener('touchstart', function(e){ e.preventDefault(); });
+  </script>
+
+  <canvas id="surface" width="800px" height="600px" style="border-color:red; border-width:1px; border-style:solid;" />
+  <script>
+
+
+
+  var canvas = document.querySelector("#surface");
+  var handler = new InputHandler(canvas);
+  var surface = new libmypaint.MyPaintCanvasSurface(canvas);
+
+
+
+  handler.onDrawStart(function() {
+    surface.newStroke();
+  });
+
+  handler.onDrawAt(function(x,y,dt) {
+    surface.stroke(x, y, dt);
+  });
+
+  handler.onDrawEnd(function(x,y,dt) {
+    surface.stroke(x, y, dt);
+  });
+
+
+
+  surface.setBrush(brushes[10]).stroke(200,111).stroke(10,212).stroke(50,50);
+  surface.setBrush(brushes[0]).stroke(400,311, 1).stroke(300,500, 1).stroke(500,500, 1);
+
+  surface.setBrush(brushes[0]);
+
+  </script>
 
 </body>
 </html>
