@@ -6,3 +6,7 @@ function isFunction(obj) {
 function bind(func, ctx) {
     return function() { return func.apply(ctx, arguments);}
 }
+
+function forEachKeyIn(obj, iteratee) {
+    Object.keys(obj || {}).forEach(function(key) { iteratee(key, obj[key])});
+}

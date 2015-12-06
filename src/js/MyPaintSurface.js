@@ -26,7 +26,11 @@ var MyPaintSurface = (function(EmModuleFactory) {
             EM_Module : EM_Module,
 
             new_stroke : EM_Module.cwrap("new_stroke"),
-            stroke_at : EM_Module.cwrap("stroke_at", "void", ["number", "number", "number"])
+            stroke_at : EM_Module.cwrap("stroke_at", "void", ["number", "number", "number"]),
+
+            set_brush_base_value : EM_Module.cwrap("set_brush_base_value", "void", ["string", "number"]),
+            set_brush_mapping_n : EM_Module.cwrap("set_brush_mapping_n", "void", ["string", "string", "number"]),
+            set_brush_mapping_point : EM_Module.cwrap("set_brush_mapping_point", "void", ["string", "string", "number", "number", "number"])
         }
     }
 
@@ -37,7 +41,21 @@ var MyPaintSurface = (function(EmModuleFactory) {
     };
 
     MyPaintSurface.prototype.setBrush = function(brush) {
-        // noop
+        var bindings = this._bindings;
+        var settings = brush.settings;
+
+        forEachKeyIn(settings, function(settingName, setting) {
+            bindings.set_brush_base_value(settingName, (setting.base_value || 0.0));
+
+            forEachKeyIn(setting.inputs, function(inputName, input) {
+                bindings.set_brush_mapping_n(settingName, inputName, (input.length));
+
+                input.forEach(function(point, index) {
+                    bindings.set_brush_mapping_point(settingName, inputName, index, point[0], point[1]);
+                });
+            });
+
+        });
 
         return this;
     };
