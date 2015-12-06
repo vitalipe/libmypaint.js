@@ -28,6 +28,7 @@ var MyPaintSurface = (function(EmModuleFactory) {
             new_stroke : EM_Module.cwrap("new_stroke"),
             stroke_at : EM_Module.cwrap("stroke_at", "void", ["number", "number", "number", "number", "number", "number"]),
 
+            new_brush : EM_Module.cwrap("new_brush"),
             set_brush_base_value : EM_Module.cwrap("set_brush_base_value", "void", ["string", "number"]),
             set_brush_mapping_n : EM_Module.cwrap("set_brush_mapping_n", "void", ["string", "string", "number"]),
             set_brush_mapping_point : EM_Module.cwrap("set_brush_mapping_point", "void", ["string", "string", "number", "number", "number"])
@@ -42,6 +43,8 @@ var MyPaintSurface = (function(EmModuleFactory) {
     MyPaintSurface.prototype.setBrush = function(brush) {
         var bindings = this._bindings;
         var settings = brush.settings;
+
+        bindings.new_brush();
 
         forEachKeyIn(settings, function(settingName, setting) {
             bindings.set_brush_base_value(settingName, (setting.base_value || 0.0));

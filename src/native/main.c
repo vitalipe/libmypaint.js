@@ -10,6 +10,13 @@ static ProxySurface* surface;
 static MyPaintBrush* brush;
 
 
+void new_brush() {
+	if (brush != NULL)
+		mypaint_brush_unref(brush);
+
+	brush = mypaint_brush_new();
+}
+
 void set_brush_base_value(char* setting_name, double base_value) {
 	MyPaintBrushSetting setting_id = mypaint_brush_setting_from_cname(setting_name);
 	mypaint_brush_set_base_value(brush, setting_id, base_value);
