@@ -1,3 +1,2 @@
-exports.MyPaintSurface = MyPaintSurface;
-exports.MyPaintCanvasSurface = MyPaintCanvasSurface;
+exports.Painter = Painter;
 exports.Bindings = Bindings;

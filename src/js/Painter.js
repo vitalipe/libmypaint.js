@@ -1,12 +1,12 @@
 
 
-var MyPaintSurface = (function(Bindings) {
+var Painter = (function(Bindings) {
 
-    var MyPaintSurface = function(drawDab, getColor) {
-        this._bindings = new Bindings(drawDab, getColor);
+    var Painter = function(bindings) {
+        this._bindings = bindings;
     };
 
-    MyPaintSurface.prototype.setBrush = function(brush) {
+    Painter.prototype.setBrush = function(brush) {
         var bindings = this._bindings;
         var settings = brush.settings;
 
@@ -29,12 +29,12 @@ var MyPaintSurface = (function(Bindings) {
         return this;
     };
 
-    MyPaintSurface.prototype.newStroke = function(x,y) {
+    Painter.prototype.newStroke = function(x,y) {
         this._bindings.reset_brush();
         return this.hover(x,y,10);
     }
 
-    MyPaintSurface.prototype.stroke = function(x,y, dt, pressure, xtilt, ytilt) {
+    Painter.prototype.stroke = function(x,y, dt, pressure, xtilt, ytilt) {
         pressure = isNumber(pressure) ? pressure : 0.5;
         xtilt = (xtilt || 0.0);
         ytilt = (ytilt || 0.0);
@@ -44,12 +44,12 @@ var MyPaintSurface = (function(Bindings) {
         return this;
     }
 
-    MyPaintSurface.prototype.hover = function(x,y, dt) {
+    Painter.prototype.hover = function(x,y, dt) {
         return this.stroke(x,y, dt, 0, 0, 0);
     }
 
 
-    return MyPaintSurface;
+    return Painter;
 
 
 })(Bindings);

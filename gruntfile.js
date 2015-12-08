@@ -28,7 +28,7 @@ module.exports = function(grunt) {
         concat : {
 
             js : {
-                src: ["src/js/common.js", "src/js/Bindings.js", "src/js/MyPaintSurface.js", "src/js/MyPaintCanvasSurface.js", "src/js/_exports.js"],
+                src: ["src/js/common.js", "src/js/Bindings.js", "src/js/Painter.js", "src/js/_exports.js"],
                 dest: "bin/wrapper.js"
             },
 
