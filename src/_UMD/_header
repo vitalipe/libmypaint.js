@@ -10,3 +10,4 @@
         factory((root.libmypaint = {}));
     }
 }(this, function (exports) {
+"use strict";
