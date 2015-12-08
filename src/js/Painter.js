@@ -14,8 +14,51 @@ var Painter = (function(Bindings) {
             return pixel;
         },
 
+        createFill : function(ctx, radius, hardness, r,g,b,a) {
+            var fill;
+
+            if (hardness >= 1)
+                return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+
+            fill = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+            fill.addColorStop(hardness, "rgba(" + r + "," + g + "," + b + "," + a + ")");
+            fill.addColorStop(1, "rgba(" + r + "," + g + "," + b + ",0)");
+
+            return fill;
+        },
+
+        /* taken form https://github.com/yapcheahshen/brushlib.js by Yap Cheah Shen :)  */
         drawDab : function(x,y,radius,r,g,b, a, hardness, alpha_eraser, aspect_ratio, angle, lock_alpha, colorize) {
-            console.log("dab");
+            if (a === 0)
+                return;
+
+            r = Math.floor(r*256);
+            g = Math.floor(g*256);
+            b = Math.floor(b*256);
+            hardness = Math.max(hardness, 0);
+
+            var height = (radius*2 / aspect_ratio) / 2;
+            var width = (radius * 2*1.3) / 2;
+            var fill = canvasRenderer.createFill(this, radius, hardness, r,g,b,a);
+
+            this.save();
+            this.beginPath();
+
+
+            // HACK: eraser hack
+            if ( alpha_eraser == 0)
+                this.globalCompositeOperation = "destination-out";
+
+            this.translate(x, y);
+            this.rotate(90 + angle );
+            this.moveTo(0,  - height);
+            this.bezierCurveTo(width,  - height, width,  height, 0 , height);
+            this.bezierCurveTo( - width,  height, - width,  - height,  0 ,  - height);
+            this.fillStyle = fill;
+            this.fill();
+
+            this.closePath();
+            this.restore();
         }
     }
 
