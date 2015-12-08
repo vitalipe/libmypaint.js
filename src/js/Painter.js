@@ -74,25 +74,7 @@ var Painter = (function(Bindings) {
     };
 
     Painter.prototype.setBrush = function(brush) {
-        var bindings = this._bindings;
-        var settings = brush.settings;
-
-        bindings.new_brush();
-
-        forEachKeyIn(settings, function(settingName, setting) {
-            bindings.set_brush_base_value(settingName, (setting.base_value || 0.0));
-
-            forEachKeyIn(setting.inputs, function(inputName, input) {
-                bindings.set_brush_mapping_n(settingName, inputName, (input.length));
-
-                input.forEach(function(point, index) {
-                    bindings.set_brush_mapping_point(settingName, inputName, index, point[0], point[1]);
-                });
-            });
-
-        });
-
-        this._bindings.reset_brush();
+        this._bindings.load_brush(brush);
         return this;
     };
 
