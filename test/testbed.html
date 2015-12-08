@@ -25,28 +25,20 @@
 
   var canvas = document.querySelector("#surface");
   var handler = new InputHandler(canvas);
-  var surface = new libmypaint.MyPaintCanvasSurface(canvas);
+  var painter = libmypaint.Painter.fromCanvas(canvas);
 
 
 
-  handler.onDrawStart(function() {
-    surface.newStroke();
-  });
-
-  handler.onDrawAt(function(x,y,dt) {
-    surface.stroke(x, y, dt);
-  });
-
-  handler.onDrawEnd(function(x,y,dt) {
-    surface.stroke(x, y, dt);
-  });
+  handler.onDrawStart(function(x,y) {painter.newStroke(x,y); });
+  handler.onDrawAt(function(x,y,dt) { painter.stroke(x, y, dt);});
+  handler.onDrawEnd(function(x,y,dt) { painter.stroke(x, y, dt); });
 
 
 
-  surface.setBrush(brushes[10]).stroke(200,111).stroke(10,212).stroke(50,50);
-  surface.setBrush(brushes[0]).stroke(400,311, 1).stroke(300,500, 1).stroke(500,500, 1);
+  painter.setBrush(brushes[10]).stroke(200,111).stroke(10,212).stroke(50,50);
+  painter.setBrush(brushes[0]).stroke(400,311, 1).stroke(300,500, 1).stroke(500,500, 1);
 
-  surface.setBrush(brushes[0]);
+  painter.setBrush(brushes[36]);
 
   </script>
 

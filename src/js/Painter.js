@@ -1,9 +1,33 @@
 
-
 var Painter = (function(Bindings) {
+
+    var canvasRenderer = {
+        getColor : function(x,y, radius) {
+            var image = this.getImageData(x, y, 1, 1);
+            var pixel = image.data;
+
+            pixel[0] /= 255;
+            pixel[1] /= 255;
+            pixel[2] /= 255;
+            pixel[3] /= 255;
+
+            return pixel;
+        },
+
+        drawDab : function(x,y,radius,r,g,b, a, hardness, alpha_eraser, aspect_ratio, angle, lock_alpha, colorize) {
+            console.log("dab");
+        }
+    }
+
 
     var Painter = function(bindings) {
         this._bindings = bindings;
+    };
+
+    // static
+    Painter.fromCanvas = function(ctx) {
+        ctx = isFunction(ctx.getContext) ? ctx.getContext("2d") : ctx;
+        return new Painter(new Bindings(bind(canvasRenderer.drawDab, ctx),  bind(canvasRenderer.getColor, ctx)));
     };
 
     Painter.prototype.setBrush = function(brush) {
@@ -48,8 +72,6 @@ var Painter = (function(Bindings) {
         return this.stroke(x,y, dt, 0, 0, 0);
     }
 
-
     return Painter;
-
 
 })(Bindings);
