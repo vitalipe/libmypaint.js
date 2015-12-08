@@ -60,8 +60,7 @@ var Painter = (function(Bindings) {
             this.closePath();
             this.restore();
         }
-    }
-
+    };
 
     var Painter = function(bindings) {
         this._bindings = bindings;
@@ -78,6 +77,16 @@ var Painter = (function(Bindings) {
         return this;
     };
 
+    Painter.prototype.setColor = function(r,g,b) {
+        var hsv = rgb2hsv(r,g,b);
+
+        this._bindings.set_brush_base_value("color_h", hsv.h);
+        this._bindings.set_brush_base_value("color_s", hsv.s);
+        this._bindings.set_brush_base_value("color_v", hsv.v);
+
+        return this;
+    };
+
     Painter.prototype.newStroke = function(x,y) {
         this._bindings.reset_brush();
         return this.hover(x,y,10);
@@ -89,7 +98,7 @@ var Painter = (function(Bindings) {
         ytilt = (ytilt || 0.0);
         dt = (dt || 0.1);
 
-        this._bindings.stroke_to(x,y, pressure, xtilt, ytilt, dt);
+        this._bindings.stroke_to(x,y, pressure, 0, ytilt, dt);
         return this;
     }
 
