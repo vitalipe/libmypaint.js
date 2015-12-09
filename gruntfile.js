@@ -4,6 +4,9 @@ module.exports = function(grunt) {
 
 
     grunt.initConfig({
+
+        pkg: grunt.file.readJSON("package.json"),
+
         "emcc" : {
             options : {
                 main : "src/native/main.c",
@@ -35,20 +38,38 @@ module.exports = function(grunt) {
 
         clean : ["bin/*", "!bin/.gitkeep"],
 
-        concat : {
+        info : {
+            options : {
+                "version" : "<%= pkg.version %>",
+                "version-file" : "src/native/libmypaint/SConscript",
+                "version-var-name" : "brushlib_version",
+                "export-name" : "INFO"
+            },
 
+            debug : {
+                build : "DEBUG",
+                dest : "bin/info.debug"
+            },
+
+            release : {
+                build : "RELEASE",
+                dest : "bin/info.release"
+            }
+        },
+
+        concat : {
             "js-wrapper" : {
                 src: ["src/js/common.js", "src/js/Bindings.js", "src/js/Painter.js", "src/js/_exports.js"],
                 dest: "bin/wrapper.js"
             },
 
             "umd-debug" : {
-                    src: ["src/_UMD/_header", "bin/lib.debug.js", "bin/wrapper.js", "src/_UMD/_footer"],
+                    src: ["src/_UMD/_header", "bin/info.debug", "bin/lib.debug.js", "bin/wrapper.js", "src/_UMD/_footer"],
                     dest: "bin/libmypaint.debug.js"
             },
 
             "umd-release" : {
-                    src: ["src/_UMD/_header", "bin/lib.release.js", "bin/wrapper.js", "src/_UMD/_footer"],
+                    src: ["src/_UMD/_header", "bin/info.release", "bin/lib.release.js", "bin/wrapper.js", "src/_UMD/_footer"],
                     dest: "bin/libmypaint.release.js"
             },
 
@@ -72,8 +93,9 @@ module.exports = function(grunt) {
     grunt.task.loadTasks("./tasks");
 
     // register
-    grunt.registerTask("debug", ["emcc:debug", "concat:js-wrapper", "concat:umd-debug"]);
-    grunt.registerTask("release", ["emcc:release", "concat:js-wrapper", "concat:umd-release"]);
+    grunt.registerTask("debug", ["emcc:debug", "info:debug", "concat:js-wrapper", "concat:umd-debug"]);
+    grunt.registerTask("release", ["emcc:release", "info:release", "concat:js-wrapper", "concat:umd-release"]);
     grunt.registerTask("build", ["clean", "debug"]);
+
     grunt.registerTask("build-brushes", ["concat:brushes"]);
 };
