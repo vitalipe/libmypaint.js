@@ -35,7 +35,10 @@ module.exports = function(grunt) {
 
     var task = function() {
         var cmd = [];
-        var config = _.defaults(this.data, defaults);
+        var config = this.options();
+
+        config = _.defaults(config, defaults);
+        config = _.extend(config, this.data);
 
         cmd.push(config.compiler);
         cmd.push(config.main);
