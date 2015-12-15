@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>libmypaint.js testbed</title>
+  <link rel="stylesheet" type="text/css" href="css/testbed.css">
+
+  <link rel="stylesheet" href="css/powerange.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+
+
+</head>
+<body>
+
+  <div class="container-fluid">
+
+    <div class="row">
+
+      <!-- Canvas Panel -->
+      <div class="col-md-10">
+        <div class="row">
+
+          <div class="col-md-12">
+            <div class="canvas-parent">
+              <div class="canvas-panel panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Canvas</h3>
+                </div>
+                <div class="panel-body">
+                  <canvas id="surface" width="768px" height="600px"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Panel -->
+          <div class="col-md-8 col-md-offset-2">
+            <div class="inputs-panel panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Info Panel</h3>
+              </div>
+
+              <div class="panel-body">
+                <table class="table table-striped table-hover table-condensed">
+                  <tbody>
+                  <tr>
+                    <td>strokes:</td><td>0</td>
+                  </tr>
+                  <tr>
+                    <td>stroke time:</td><td>0 ms</td>
+                  </tr>
+                  <tr>
+                    <td>total stroke time:</td><td>0 sec</td>
+                  </tr>
+                </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      <!-- Brush Panel -->
+      <div class="col-md-2">
+        <div class="brush-panel panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Brush Panel</h3>
+          </div>
+          <div class="panel-body">
+
+            <select id="company" class="form-control">
+              <option>small</option>
+              <option>medium</option>
+              <option>large</option>
+            </select>
+
+            <div class="brush-color-inputs">
+              <div class="color-select-sliders">
+                <div class="color-input-wrapper red-input-wrapper">
+                  <input id="redColorInput" type="text" />
+                </div>
+
+                <div class="color-input-wrapper green-input-wrapper">
+                  <input id="greenColorInput" type="text" />
+                </div>
+
+                <div class="color-input-wrapper blue-input-wrapper">
+                  <input id="blueColorInput" type="text" />
+                </div>
+              </div>
+              <div>
+                <input type="text" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Panel -->
+      <div class="col-md-2">
+        <div class="inputs-panel panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Input Panel</h3>
+          </div>
+
+          <div class="panel-body">
+            <div>
+            <div class="btn-group input-src-select" role="group" aria-label="...">
+              <button type="button" class="btn btn-success active">Pointer</button>
+              <button type="button" class="btn btn-default">Mouse</button>
+              <button type="button" class="btn btn-default">Touch</button>
+            </div>
+
+            <div class="input-params-select">
+              <div>Pressure, X Tilt, Y Tilt</div>
+              <div class="param-input-wrapper">
+                <input id="pressureInput" type="text" />
+              </div>
+              <div class="param-input-wrapper">
+                <input id="xtiltInput" type="text"  />
+              </div>
+              <div class="param-input-wrapper">
+                <input id="ytiltInput" type="text" />
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+
+  <!-- libs -->
+  <script src="lib/lodash.js"></script>
+  <script src="lib/jquery.js"></script>
+  <script src="lib/powerange.js"></script>
+
+
+  <script src="testbed.js"></script>
+  <script>document.body.addEventListener('touchstart', function(e){ e.preventDefault(); });</script>
+
+</body>
+</html>
