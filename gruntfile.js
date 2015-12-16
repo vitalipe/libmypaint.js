@@ -25,7 +25,7 @@ module.exports = function(grunt) {
 
             debug : {
                 optimization : "O0",
-                bin : "bin/lib.debug.js",
+                bin : "bin/lib.debug.js"
             },
 
             release : {
@@ -54,6 +54,31 @@ module.exports = function(grunt) {
             release : {
                 build : "RELEASE",
                 dest : "bin/info.release"
+            }
+        },
+
+        "http-server" : {
+            testbed : {
+                root : "test/testbed/",
+                port : 4242,
+                host: "0.0.0.0",
+                openBrowser : true
+            }
+        },
+
+        copy : {
+            "testbed-debug" : {
+                files : [
+                    {src : "bin/libmypaint.debug.js", dest : "test/testbed/bin/libmypaint.js"},
+                    {src : "test/brushes/all-brushes.js", dest : "test/testbed/bin/brushes.js"}
+                ]
+            },
+
+            "testbed-release" : {
+                files : [
+                    {src : "bin/libmypaint.release.js", dest : "test/testbed/bin/libmypaint.js"},
+                    {src : "test/brushes/all-brushes.js", dest : "test/testbed/bin/brushes.js"}
+                ]
             }
         },
 
@@ -89,13 +114,27 @@ module.exports = function(grunt) {
     // load
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-http-server');
+
 
     grunt.task.loadTasks("./tasks");
 
-    // register
-    grunt.registerTask("debug", ["emcc:debug", "info:debug", "concat:js-wrapper", "concat:umd-debug"]);
-    grunt.registerTask("release", ["emcc:release", "info:release", "concat:js-wrapper", "concat:umd-release"]);
-    grunt.registerTask("build", ["clean", "debug"]);
+    // build tasks
+    grunt.registerTask("build:debug", ["emcc:debug", "info:debug", "concat:js-wrapper", "concat:umd-debug"]);
+    grunt.registerTask("build:release", ["emcc:release", "info:release", "concat:js-wrapper", "concat:umd-release"]);
+    grunt.registerTask("build:testbed-debug", ["build:debug", "concat:brushes", "copy:testbed-debug"]);
+    grunt.registerTask("build:testbed-release", ["build:release", "concat:brushes", "copy:testbed-release"]);
 
-    grunt.registerTask("build-brushes", ["concat:brushes"]);
+    // testbed tasks
+    grunt.registerTask("testbed:release", ["clean", "build:testbed-release", "http-server:testbed"]);
+    grunt.registerTask("testbed:debug", ["clean", "build:testbed-debug", "http-server:testbed"]);
+
+    // shortcuts
+    grunt.registerTask("debug", ["clean", "build:debug"]);
+    grunt.registerTask("release", ["clean", "build:release"]);
+    grunt.registerTask("testbed", ["testbed:debug"]);
+
+
+
 };
