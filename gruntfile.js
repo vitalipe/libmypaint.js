@@ -70,14 +70,14 @@ module.exports = function(grunt) {
             "testbed-debug" : {
                 files : [
                     {src : "bin/libmypaint.debug.js", dest : "test/testbed/bin/libmypaint.js"},
-                    {src : "test/brushes/all-brushes.js", dest : "test/testbed/bin/brushes.js"}
+                    {src : "bin/all-brushes.js", dest : "test/testbed/bin/brushes.js"}
                 ]
             },
 
             "testbed-release" : {
                 files : [
                     {src : "bin/libmypaint.release.js", dest : "test/testbed/bin/libmypaint.js"},
-                    {src : "test/brushes/all-brushes.js", dest : "test/testbed/bin/brushes.js"}
+                    {src : "bin/all-brushes.js", dest : "test/testbed/bin/brushes.js"}
                 ]
             }
         },
@@ -98,14 +98,19 @@ module.exports = function(grunt) {
                     dest: "bin/libmypaint.release.js"
             },
 
-            "brushes" : {
+            "brushes-array" : {
                 options : {
-                    banner : "/* generated with 'grunt build-brushes' */ \n\n var brushes = [",
+                    banner : "[",
                     footer : "]",
                     separator : " , "
                 },
                 src : ["test/brushes/*/*.myb"],
-                dest : "test/brushes/all-brushes.js"
+                dest : "bin/_brushes"
+            },
+
+            "brushes" : {
+                src : ["test/brushes/_header", "bin/_brushes", "test/brushes/_footer"],
+                dest : "bin/all-brushes.js"
             }
         }
     });
@@ -123,8 +128,11 @@ module.exports = function(grunt) {
     // build tasks
     grunt.registerTask("build:debug", ["emcc:debug", "info:debug", "concat:js-wrapper", "concat:umd-debug"]);
     grunt.registerTask("build:release", ["emcc:release", "info:release", "concat:js-wrapper", "concat:umd-release"]);
-    grunt.registerTask("build:testbed-debug", ["build:debug", "concat:brushes", "copy:testbed-debug"]);
-    grunt.registerTask("build:testbed-release", ["build:release", "concat:brushes", "copy:testbed-release"]);
+    grunt.registerTask("build:brushes", ["concat:brushes-array", "concat:brushes"]);
+    grunt.registerTask("build:testbed-debug", ["build:debug", "build:brushes", "copy:testbed-debug"]);
+    grunt.registerTask("build:testbed-release", ["build:release", "build:brushes", "copy:testbed-release"]);
+
+
 
     // testbed tasks
     grunt.registerTask("testbed:release", ["clean", "build:testbed-release", "http-server:testbed"]);

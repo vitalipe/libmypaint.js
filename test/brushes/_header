@@ -1,0 +1,32 @@
+var brushes = (function(_brushes) {
+
+
+var brushGroups = {common : []};
+
+// group by type
+_.each(_brushes, function(brush, index) {
+    var names = brush.parent_brush_name.split("/");
+    var brushName = (names[1] ?names[1] : "brush_ " +index);
+    var groupName =  (names[0] ? names[0] : "common");
+    var group = (brushGroups[groupName] || []);
+
+    brush.name = brushName;
+    brush.index = index;
+    group.push(brush);
+
+    brushGroups[groupName] = group;
+});
+
+// now move all small groups into "common"
+_.each(brushGroups, function(group, groupName) {
+    if (groupName === "common" || group.length > 1)
+        return;
+
+    brushGroups.common = brushGroups.common.concat(group);
+    delete brushGroups[groupName];
+});
+
+
+return { groups : brushGroups, all : _brushes};
+
+})(
