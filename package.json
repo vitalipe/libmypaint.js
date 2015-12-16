@@ -7,9 +7,11 @@
   "license": "MIT",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "shelljs": "^0.5.3",
-    "lodash": "~3.10.1",
+    "grunt-contrib-clean": "~0.7.0",
     "grunt-contrib-concat": "~0.5.1",
-    "grunt-contrib-clean": "~0.7.0"
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-http-server": "^1.13.0",
+    "lodash": "~3.10.1",
+    "shelljs": "^0.5.3"
   }
 }
