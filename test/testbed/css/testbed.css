@@ -14,11 +14,20 @@ span.range-min, span.range-max {
 }
 .canvas-panel .panel-body {
   padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 
 
 /* Brush Panel */
+.brush-panel #colorHexInput {
+  text-align: center;
+  border: none;
+  font-weight: bolder;
+}
+
 .brush-panel .color-input-wrapper {
   height: 200px;
   width: auto;
