@@ -78,7 +78,7 @@ var Painter = (function(Bindings) {
     };
 
     Painter.prototype.setColor = function(r,g,b) {
-        var hsv = rgb2hsv(r,g,b);
+        var hsv = Array.isArray(r) ? rgb2hsv.apply(null, r) : rgb2hsv(r,g,b);
 
         this._bindings.set_brush_base_value("color_h", hsv.h);
         this._bindings.set_brush_base_value("color_s", hsv.s);

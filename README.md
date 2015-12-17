@@ -125,10 +125,15 @@ see https://github.com/mypaint/mypaint/tree/master/brushes for brush examples.
 **NOTE:** the brush parameter object will **not** be mutated.
 
 ### .setColor(r,g,b)
-@param r,g,b: **Number** - between 0 and 255. <br>
+@param r,g,b: **Number** - between 0 and 255, or an Array (e,g [r,g,b]) <br>
 @returns: **this**
 
-set current brush color.
+set current brush color... for example:
+
+```javascript
+    painter.setColor(255,0,0).setColor([255,255,0]);
+````
+
 
 **NOTE:** The next call to .setBrush() will reset this value.
 
