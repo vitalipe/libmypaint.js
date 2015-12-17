@@ -341,8 +341,11 @@ var App = function() {
 
 
     drawController.update(_state);
+
+    this.painter = painter;
+    this.state = _state;
 };
 
 
 
-new App();
+var app = new App();
