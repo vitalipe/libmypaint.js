@@ -4,6 +4,8 @@ var InputType = {
     TOUCH : "TOUCH"
 };
 
+function isTouchDevice() { return 'ontouchstart' in window;}
+
 
 
 var BrushColorInputView = function(color) {
@@ -277,7 +279,7 @@ var App = function() {
     var _state = {
         color : [54,100,100],
         brush : brushes.all[100],
-        inputMethod : InputType.MOUSE,
+        inputMethod : isTouchDevice() ? InputType.TOUCH : InputType.MOUSE,
         pressure : 0.5,
         xtilt : 0,
         ytilt : 0
