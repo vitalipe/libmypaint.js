@@ -3,3 +3,5 @@ node_modules
 bin/*
 !bin/.gitkeep
 test/brushes/all-brushes.js
+test/testbed/bin/*
+!test/testbed/bin/.gitkeep

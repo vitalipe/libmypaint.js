@@ -1,0 +1,83 @@
+span.range-min, span.range-max {
+  color: white;
+}
+
+
+/* Canvas Panel */
+#surface {
+  background-color: white;
+}
+
+.canvas-parent {
+  display: flex;
+  justify-content: center;
+}
+.canvas-panel .panel-body {
+  padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+
+
+/* Brush Panel */
+.brush-panel #colorHexInput {
+  text-align: center;
+  border: none;
+  font-weight: bolder;
+}
+
+.brush-panel .color-input-wrapper {
+  height: 200px;
+  width: auto;
+  margin: 50px 0 30px 30px;
+  position: relative;
+  display: inline-block;
+}
+
+
+.brush-panel .red-input-wrapper .range-quantity {
+  background-color: #800000;
+}
+
+.brush-panel .green-input-wrapper .range-quantity {
+  background-color: SeaGreen;
+}
+
+.brush-panel .blue-input-wrapper .range-quantity {
+  background-color: DodgerBlue;
+}
+
+.brush-panel .brush-color-inputs {
+  text-align: center;
+}
+
+
+.brush-panel .color-select-sliders {
+  margin-right: 25px;
+}
+
+/* Inputs Panel */
+.param-input-wrapper {
+  height: 200px;
+  width: auto;
+  margin: 30px 0 30px 30px;
+  position: relative;
+  display: inline-block;
+}
+
+.inputs-panel .panel-body {
+  display: flex;
+  justify-content: center;
+
+}
+
+.inputs-panel .input-src-select {
+  margin-bottom: 10px;
+}
+
+.inputs-panel .input-params-select {
+  text-align: center;
+  margin-right: 25px;
+}
