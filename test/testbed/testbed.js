@@ -149,12 +149,9 @@ var InputParamsView = function(pressure, xtilt, ytilt) {
 
 var DrawController = (function() {
 
-    var MouseDrawController = function(canvas, painter) {
+    var MouseInputHandler = function(canvas, painter, pressure, xtilt, ytilt) {
         var _rect =  canvas.getBoundingClientRect(); // assume no resize
         var _lastTime = 0;
-        var _pressure = 0.5;
-        var _xtilt = 0;
-        var _ytilt = 0;
 
         var _onMouseMove = function(e) {
             var dt = (_lastTime ? e.timeStamp - _lastTime : 0) / 1000;
@@ -164,33 +161,27 @@ var DrawController = (function() {
             _lastTime = e.timeStamp;
 
             if (e.which === 1) // left mouse button is pressed?
-                painter.stroke(x,y,dt, _pressure, _xtilt, _ytilt);
+                painter.stroke(x,y,dt, pressure, xtilt, ytilt);
             else
                 painter.hover(x, y, dt); // same as stroke() with pressure 0
         };
 
-        var _listen = function(pressure, xtilt, ytilt) {
-            _stopListening();
+        canvas.addEventListener("mousemove", _onMouseMove);
 
-            _pressure = pressure;
-            _xtilt = xtilt;
-            _ytilt = ytilt;
-
-            canvas.addEventListener("mousemove", _onMouseMove);
-        };
-
-        var _stopListening = function() {
-            canvas.removeEventListener("mousemove", _onMouseMove);
-            _lastTime = 0;
-        };
 
         // public
-        this.listen = _listen;
-        this.stopListening = _stopListening;
+        this.destroy = canvas.removeEventListener.bind(canvas, "mousemove", _onMouseMove);
+        this.shouldBeUpdated = _.negate(_.isEqual.bind(_,
+            {
+                inputMethod : InputType.MOUSE,
+                pressure : pressure,
+                xtilt : xtilt,
+                ytilt : ytilt}
+        ));
     };
 
 
-    var PointerDrawController = function(canvas, painter) {
+    var PointerInputHandler = function(canvas, painter) {
         var _rect =  canvas.getBoundingClientRect(); // assume no resize
         var _lastTime = 0;
 
@@ -203,29 +194,19 @@ var DrawController = (function() {
             painter.stroke(x, y, dt, e.pressure, e.tiltX, e.tiltY);
         };
 
-        var _listen = function() {
-            _stopListening();
-            canvas.addEventListener("pointermove", _onPointerMove);
-        };
-
-        var _stopListening = function() {
-            canvas.removeEventListener("pointermove", _onPointerMove);
-            _lastTime = 0;
-        };
+        canvas.addEventListener("pointermove", _onPointerMove);
 
         // public
-        this.listen = _listen;
-        this.stopListening = _stopListening;
+        this.destroy = canvas.removeEventListener.bind(canvas, "pointermove", _onPointerMove);
+        this.shouldBeUpdated = function(params) { return params.inputMethod !== InputType.POINTER};
+
     };
 
 
-    var TouchDrawController = function(canvas, painter) {
+    var TouchInputHandler = function(canvas, painter, pressure, xtilt, ytilt) {
         var _rect =  canvas.getBoundingClientRect(); // assume no resize
         var _lastTime = 0;
         var _touching = false;
-        var _pressure = 0.5;
-        var _xtilt = 0;
-        var _ytilt = 0;
 
         var _onTouchEnd = function() {_touching = false};
         var _onTouchMove = function(e) {
@@ -233,9 +214,8 @@ var DrawController = (function() {
             var x =  e.touches[0].pageX - _rect.left;
             var y =  e.touches[0].pageY - _rect.top;
 
-
             if (_touching)
-                painter.stroke(x, y, dt, _pressure, _xtilt, _ytilt);
+                painter.stroke(x, y, dt, pressure, xtilt, ytilt);
             else
                 painter.newStroke(x, y);
 
@@ -244,53 +224,64 @@ var DrawController = (function() {
             _touching = true;
         };
 
-        var _listen = function(pressure, xtilt, ytilt) {
-            _stopListening();
-
-            _pressure = pressure;
-            _xtilt = xtilt;
-            _ytilt = ytilt;
-
-            canvas.addEventListener("touchmove", _onTouchMove);
-            canvas.addEventListener("touchend", _onTouchEnd);
-        };
-
-        var _stopListening = function() {
-            canvas.removeEventListener("touchmove", _onTouchMove);
-            canvas.removeEventListener("touchend", _onTouchEnd);
-
-            _lastTime = 0;
-            _touching = false;
-        };
+        canvas.addEventListener("touchmove", _onTouchMove);
+        canvas.addEventListener("touchend", _onTouchEnd);
 
         // public
-        this.listen = _listen;
-        this.stopListening = _stopListening;
+        this.destroy = function() {
+            canvas.removeEventListener("touchmove", _onTouchMove);
+            canvas.removeEventListener("touchend", _onTouchEnd);
+        };
+
+        this.shouldBeUpdated = _.negate(_.isEqual.bind(_,
+            {
+                inputMethod : InputType.TOUCH,
+                pressure : pressure,
+                xtilt : xtilt,
+                ytilt : ytilt}
+        ));
     };
 
+    var InputHandlerFactory = function(canvas, painter) {
+
+        var _create = function(state) {
+            var Factory = null;
+
+            if (state.inputMethod === InputType.MOUSE)
+                Factory = MouseInputHandler;
+
+            if (state.inputMethod === InputType.TOUCH)
+                Factory = TouchInputHandler;
+
+            if (state.inputMethod === InputType.POINTER)
+                Factory = PointerInputHandler;
+
+            return new Factory(canvas, painter, state.pressure, state.xtilt, state.ytilt);
+        };
+
+        var _destroyAndCreateNew = function(state, other) {
+            other.destroy();
+            return _create(state);
+        };
+
+        var _lazyCreate = function(state, other) {
+           if (other.shouldBeUpdated(_.pick(state, "inputMethod", "pressure", "xtilt", "ytilt")))
+               return _destroyAndCreateNew(state, other);
+           else
+               return other;
+        };
+
+        this.create = _create;
+        this.lazyCreate = _lazyCreate;
+    };
 
     return function(painter, canvas, initialState) {
 
+        var _handlerFactory  = new InputHandlerFactory(canvas, painter);
+        var _handler = _handlerFactory.create(initialState);
 
-        var _touch = new TouchDrawController(canvas, painter);
-        var _mouse = new MouseDrawController(canvas, painter);
-        var _pointer = new PointerDrawController(canvas, painter);
-
-        var _setActiveInput = function(input, pressure, xtilt, ytilt) {
-            _.invoke([_touch, _mouse, _pointer], "stopListening");
-
-            if (input === InputType.TOUCH)
-                _touch.listen(pressure, xtilt, ytilt);
-
-            if (input === InputType.MOUSE)
-                _mouse.listen(pressure, xtilt, ytilt);
-
-            if (input === InputType.POINTER)
-                _pointer.listen();
-        };
-
-        _update = function(state) {
-            _setActiveInput(state.inputMethod, state.pressure, state.xtilt, state.ytilt);
+        var _update = function(state) {
+            _handler = _handlerFactory.lazyCreate(state, _handler);
             painter.setBrush(state.brush).setColor(state.color);
         };
 
@@ -344,11 +335,7 @@ var App = function() {
     });
 
     _inputParamsView.onUpdate(function(pressure, xtilt, ytilt) {
-        _state.pressure = pressure;
-        _state.xtilt = xtilt;
-        _state.ytilt = ytilt;
-
-        console.log(_state);
+        _.extend(_state, {pressure : pressure, xtilt : xtilt, ytilt : ytilt});
         drawController.update(_state);
     });
 
