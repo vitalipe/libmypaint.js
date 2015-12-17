@@ -126,9 +126,21 @@ var InputTypeSelectView = function(input) {
 };
 
 var InputParamsView = function(pressure, xtilt, ytilt) {
-    new Powerange(document.querySelector("#pressureInput"), { min: 0, max: 1, start: pressure, vertical : true });
-    new Powerange(document.querySelector("#xtiltInput"), { min: 0, max: 180, start: xtilt, vertical : true });
-    new Powerange(document.querySelector("#ytiltInput"), { min: 0, max: 180, start: ytilt, vertical : true });
+    var _pressure = document.querySelector("#pressureInput");
+    var _xtilt = document.querySelector("#xtiltInput");
+    var _ytilt = document.querySelector("#ytiltInput");
+    var _inputParamsUpdateCallback = _.noop;
+
+    var _update = _.after(3, function() {
+        _inputParamsUpdateCallback(parseFloat(_pressure.value), parseInt(_xtilt.value), parseInt(_ytilt.value));
+    });
+
+    new Powerange(_pressure, { callback : _update, decimal: true, min: 0, max: 1, start: pressure, vertical : true });
+    new Powerange(_xtilt, { callback : _update, min: 0, max: 180, start: xtilt, vertical : true });
+    new Powerange(_ytilt, { callback : _update, min: 0, max: 180, start: ytilt, vertical : true });
+
+
+    this.onUpdate = function(callback) {_inputParamsUpdateCallback = callback};
 };
 
 
@@ -140,6 +152,9 @@ var DrawController = (function() {
     var MouseDrawController = function(canvas, painter) {
         var _rect =  canvas.getBoundingClientRect(); // assume no resize
         var _lastTime = 0;
+        var _pressure = 0.5;
+        var _xtilt = 0;
+        var _ytilt = 0;
 
         var _onMouseMove = function(e) {
             var dt = (_lastTime ? e.timeStamp - _lastTime : 0) / 1000;
@@ -149,13 +164,18 @@ var DrawController = (function() {
             _lastTime = e.timeStamp;
 
             if (e.which === 1) // left mouse button is pressed?
-                painter.stroke(x,y,dt);
+                painter.stroke(x,y,dt, _pressure, _xtilt, _ytilt);
             else
                 painter.hover(x, y, dt); // same as stroke() with pressure 0
         };
 
-        var _listen = function() {
+        var _listen = function(pressure, xtilt, ytilt) {
             _stopListening();
+
+            _pressure = pressure;
+            _xtilt = xtilt;
+            _ytilt = ytilt;
+
             canvas.addEventListener("mousemove", _onMouseMove);
         };
 
@@ -203,6 +223,9 @@ var DrawController = (function() {
         var _rect =  canvas.getBoundingClientRect(); // assume no resize
         var _lastTime = 0;
         var _touching = false;
+        var _pressure = 0.5;
+        var _xtilt = 0;
+        var _ytilt = 0;
 
         var _onTouchEnd = function() {_touching = false};
         var _onTouchMove = function(e) {
@@ -212,7 +235,7 @@ var DrawController = (function() {
 
 
             if (_touching)
-                painter.stroke(x, y, dt);
+                painter.stroke(x, y, dt, _pressure, _xtilt, _ytilt);
             else
                 painter.newStroke(x, y);
 
@@ -221,8 +244,13 @@ var DrawController = (function() {
             _touching = true;
         };
 
-        var _listen = function() {
+        var _listen = function(pressure, xtilt, ytilt) {
             _stopListening();
+
+            _pressure = pressure;
+            _xtilt = xtilt;
+            _ytilt = ytilt;
+
             canvas.addEventListener("touchmove", _onTouchMove);
             canvas.addEventListener("touchend", _onTouchEnd);
         };
@@ -241,34 +269,37 @@ var DrawController = (function() {
     };
 
 
-    return function(painter, canvas, input) {
+    return function(painter, canvas, initialState) {
 
-        var touch = new TouchDrawController(canvas, painter);
-        var mouse = new MouseDrawController(canvas, painter);
-        var pointer = new PointerDrawController(canvas, painter);
 
-        var _setInput = function(input) {
-            _.invoke([touch, mouse, pointer], "stopListening");
+        var _touch = new TouchDrawController(canvas, painter);
+        var _mouse = new MouseDrawController(canvas, painter);
+        var _pointer = new PointerDrawController(canvas, painter);
+
+        var _setActiveInput = function(input, pressure, xtilt, ytilt) {
+            _.invoke([_touch, _mouse, _pointer], "stopListening");
 
             if (input === InputType.TOUCH)
-                touch.listen();
+                _touch.listen(pressure, xtilt, ytilt);
 
             if (input === InputType.MOUSE)
-                mouse.listen();
+                _mouse.listen(pressure, xtilt, ytilt);
 
             if (input === InputType.POINTER)
-                pointer.listen();
+                _pointer.listen();
         };
 
-        _setInput(input);
+        _update = function(state) {
+            _setActiveInput(state.inputMethod, state.pressure, state.xtilt, state.ytilt);
+            painter.setBrush(state.brush).setColor(state.color);
+        };
 
-        this.setInput = _setInput;
+        _update(initialState);
+
+        this.update = _update;
     };
 
 })();
-
-
-
 
 
 
@@ -287,7 +318,7 @@ var App = function() {
 
     var canvas = document.querySelector("#surface");
     var painter = libmypaint.Painter.fromCanvas(canvas);
-    var drawController = new DrawController(painter, canvas, _state.inputMethod);
+    var drawController = new DrawController(painter, canvas, _state);
 
     var _brushSelectView = new BrushSelectView(brushes, _state.brush);
     var _colorView = new BrushColorInputView(_state.color);
@@ -299,22 +330,30 @@ var App = function() {
 
     _brushSelectView.onBrushSelect(function(brush) {
         _state.brush = brush;
-        painter.setBrush(_state.brush).setColor(_state.color);
+        drawController.update(_state);
     });
 
     _colorView.onColorChange(function(color) {
        _state.color = color;
-        painter.setColor(_state.color);
+        drawController.update(_state);
     });
 
     _inputSelectView.onInputSelect(function(input) {
         _state.inputMethod = input;
-        drawController.setInput(_state.inputMethod);
+        drawController.update(_state);
+    });
+
+    _inputParamsView.onUpdate(function(pressure, xtilt, ytilt) {
+        _state.pressure = pressure;
+        _state.xtilt = xtilt;
+        _state.ytilt = ytilt;
+
+        console.log(_state);
+        drawController.update(_state);
     });
 
 
-    painter.setBrush(_state.brush).setColor(_state.color);
-
+    drawController.update(_state);
 };
 
 
