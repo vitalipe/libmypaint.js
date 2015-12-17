@@ -299,7 +299,7 @@ var DrawController = (function() {
 var App = function() {
 
     var _state = {
-        color : [255,215,0],
+        color : [255,215,60],
         brush : brushes.all[25],
         inputMethod : isTouchDevice() ? InputType.TOUCH : InputType.MOUSE,
         pressure : 0.5,
