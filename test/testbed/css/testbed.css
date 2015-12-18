@@ -22,6 +22,11 @@ span.range-min, span.range-max {
   -ms-user-select: none;
 }
 
+.canvas-panel .panel-title {
+  text-align: center;
+  font-weight: bolder;
+}
+
 
 
 /* Brush Panel */

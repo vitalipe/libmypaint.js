@@ -143,7 +143,13 @@ var InputParamsView = function(pressure, xtilt, ytilt) {
     this.onUpdate = function(callback) {_inputParamsUpdateCallback = callback};
 };
 
+var TitleView = function(INFO) {
+    var title = "[ Version: " + INFO.version + " (" + INFO.build + ") " + "] &nbsp " +
+        "[ Engine: " + INFO.libmypaint_version + "] &nbsp [ Build ID: " + INFO.commit_id  + "]";
 
+    document.querySelector(".canvas-panel .panel-title").innerHTML = title;
+    document.querySelector("title").innerHTML = title;
+};
 
 
 
@@ -293,9 +299,6 @@ var DrawController = (function() {
 })();
 
 
-
-
-
 var App = function() {
 
     var _state = {
@@ -307,9 +310,9 @@ var App = function() {
         ytilt : 0
     };
 
-    var canvas = document.querySelector("#surface");
-    var painter = libmypaint.Painter.fromCanvas(canvas);
-    var drawController = new DrawController(painter, canvas, _state);
+    var _canvas = document.querySelector("#surface");
+    var _painter = libmypaint.Painter.fromCanvas(_canvas);
+    var _drawController = new DrawController(_painter, _canvas, _state);
 
     var _brushSelectView = new BrushSelectView(brushes, _state.brush);
     var _colorView = new BrushColorInputView(_state.color);
@@ -317,33 +320,35 @@ var App = function() {
     var _inputSelectView = new InputTypeSelectView(_state.inputMethod);
     var _inputParamsView = new InputParamsView(_state.pressure, _state.xtilt, _state.ytilt);
 
+    new TitleView(libmypaint.INFO);
 
 
     _brushSelectView.onBrushSelect(function(brush) {
         _state.brush = brush;
-        drawController.update(_state);
+        _drawController.update(_state);
     });
 
     _colorView.onColorChange(function(color) {
        _state.color = color;
-        drawController.update(_state);
+        _drawController.update(_state);
     });
 
     _inputSelectView.onInputSelect(function(input) {
         _state.inputMethod = input;
-        drawController.update(_state);
+        _drawController.update(_state);
     });
 
     _inputParamsView.onUpdate(function(pressure, xtilt, ytilt) {
         _.extend(_state, {pressure : pressure, xtilt : xtilt, ytilt : ytilt});
-        drawController.update(_state);
+        _drawController.update(_state);
     });
 
 
-    drawController.update(_state);
+    _drawController.update(_state);
 
-    this.painter = painter;
+    this.painter = _painter;
     this.state = _state;
+    this.controller = _drawController;
 };
 
 
