@@ -7,6 +7,9 @@ span.range-min, span.range-max {
 #surface {
   background-color: white;
 }
+#surface:active {
+  cursor: default;
+}
 
 .canvas-parent {
   display: flex;
