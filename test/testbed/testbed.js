@@ -303,7 +303,7 @@ var App = function() {
 
     var _state = {
         color : [255,215,60],
-        brush : brushes.all[25],
+        brush : brushes.all[5],
         inputMethod : isTouchDevice() ? InputType.TOUCH : InputType.MOUSE,
         pressure : 0.5,
         xtilt : 0,
