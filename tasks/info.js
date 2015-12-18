@@ -41,7 +41,7 @@ module.exports = function(grunt) {
     };
 
     var fetchCommitID = function() {
-        var countDirtyFilesCmd = 'git status -s | grep -c " M "';
+        var countDirtyFilesCmd = 'git diff --shortstat | wc -l';
         var getCommitHashCmd = 'git rev-parse HEAD | grep -E -o  "[0-9a-f]{40}" | tr -d "\\n" ';
 
         var dirtyCount = parseInt(exec(countDirtyFilesCmd, "failed to get git status!"));
