@@ -2,8 +2,9 @@
 
 A javascript port (emsctipten) of the awesome libmypaint brush engine :)
 
+![preview](docs/preview.gif)
 
-## Usage:
+# Usage:
 
 ```javascript
 var libmypaint = require("libmypaint"); // libmypaint.js is a UMD module...
@@ -17,6 +18,26 @@ painter.setBrush(myBrush).setColor(0,255,0).stroke(100, 100).stroke(200,100);
 
 A brush is just a JSON object. see [MyPaint](https://github.com/mypaint/mypaint/tree/master/brushes)  for brush examples. <br>
 
+# Installation:
+Download the [**latest build**](dist/libmypaint.release.js) (or the latest [**debug build**](dist/libmypaint.debug.js)). <br>
+libmypaint is a UMD module, and can work with CommonJS, AMD, and script tags:
+> CommonJS:
+```javascript
+var Nested = require("libmypaint");
+```
+
+> RequireJS:
+```javascript
+require([ "libmypaint"], function(libmypaint){ ... });
+```
+
+> Script tag
+```html
+<script src="libmypaint.js"></script>
+<script> console.log(window.libmypaint.INFO); </script>
+```
+
+# Code Examples:
 
 ### Connecting [Pointer Events](http://www.w3.org/TR/pointerevents/):
 
@@ -79,6 +100,19 @@ canvas.addEventListener("touchmove", function(e) {
 
 ````
 
+# Building:
+
+1. make sure you install node, grunt-cli and [emscripten SDK.](https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html)
+2. update git sub modules, by running: ```` git submodule update --init --recursive````
+3. run ````  npm install ````
+4. use one of the following build tasks:
+````
+grunt debug     # clean & build a debug version of the library
+grunt release   # clean & build a release version of the library
+
+grunt testbed           # build & run the testbed against the debug version
+grunt testbed:release   # build & run the testbed against the release version
+````
 
 
 # API
@@ -221,11 +255,11 @@ used during .load_brush(), and can be used to set color etc... for example:
     my.set_brush_base_value("color_v", 1.0);
 ````
 
-### .set_brush_mapping_n(setting_name, input_name, number_of_mapping_points)
+### .set_brush_mapping_n(setting_name, input_name, n)
 
 @param setting_name: **String** - the string name of setting e,g "color_h", "color_v" etc...<br>
 @param input_name: **String** - the name of the mapping e,g "pressure"...<br>
-@param number_of_mapping_points: **Number**
+@param n: **Number** - number of mapping points.
 
 Used during .load_brush(), and maps to the C function **mypaint_brush_set_mapping_n()**. <br>
 Should be called before any **.set_brush_mapping_point()** calls to this mapping...
