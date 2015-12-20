@@ -2,7 +2,12 @@
 
 A javascript port (emsctipten) of the awesome libmypaint brush engine :)
 
-![preview](docs/preview.gif)
+[![online demo](docs/preview.gif)](http://46.101.33.40:4242/)
+
+### Play with the [online demo!](http://46.101.33.40:4242/)
+
+***
+
 
 # Usage:
 
