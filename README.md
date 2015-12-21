@@ -28,7 +28,7 @@ Download the [**latest build**](dist/libmypaint.release.js) (or the latest [**de
 libmypaint is a UMD module, and can work with CommonJS, AMD, and script tags:
 > CommonJS:
 ```javascript
-var Nested = require("libmypaint");
+var libmypaint = require("libmypaint");
 ```
 
 > RequireJS:
@@ -47,6 +47,9 @@ require([ "libmypaint"], function(libmypaint){ ... });
 ### Connecting [Pointer Events](http://www.w3.org/TR/pointerevents/):
 
 ```javascript
+var canvas = document.querySelector("#mySurface");
+var painter = libmypaint.Painter.fromCanvas(canvas);
+
 var _lastTime = 0;
 var _rect =  canvas.getBoundingClientRect(); // assume no resize
 
@@ -63,6 +66,9 @@ canvas.addEventListener("pointermove", function(e) {
 ### Connecting Mouse Events:
 
 ```javascript
+var canvas = document.querySelector("#mySurface");
+var painter = libmypaint.Painter.fromCanvas(canvas);
+
 var _lastTime = 0;
 var _rect =  canvas.getBoundingClientRect(); // assume no resize
 
@@ -82,6 +88,9 @@ canvas.addEventListener("mousemove", function(e) {
 ### Connecting Touch Events:
 
 ```javascript
+var canvas = document.querySelector("#mySurface");
+var painter = libmypaint.Painter.fromCanvas(canvas);
+
 var _lastTime = 0;
 var _touching = false;
 var _rect =  canvas.getBoundingClientRect(); // assume no resize
