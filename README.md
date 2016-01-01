@@ -79,7 +79,7 @@ canvas.addEventListener("mousemove", function(e) {
 
   _lastTime = e.timeStamp;
 
-  if (e.which === 1) // left mouse button is pressed?
+  if (e.buttons === 1) // left mouse button is pressed?
     painter.stroke(x,y,dt);
   else
     painter.hover(x, y, dt); // same as stroke() with pressure 0
