@@ -33,7 +33,7 @@ var Bindings = (function(EmModuleFactory) {
         });
 
         bindings.reset_brush();
-    }
+    };
 
     return function(drawDab, getColor) {
         var EM_Module = EmModuleFactory();
@@ -43,15 +43,27 @@ var Bindings = (function(EmModuleFactory) {
 
         EM_Module.ccall("init", "void", ["number", "number"], [drawDabProxyPtr, colorProxyPtr]);
 
-        this.Module = EM_Module,
-        this.stroke_to = EM_Module.cwrap("stroke_to", "void", ["number", "number", "number", "number", "number", "number"]),
+        this.Module = EM_Module;
+        this.stroke_to = EM_Module.cwrap("stroke_to", "void",
+            ["number", "number", "number", "number", "number", "number"]);
 
         this.load_brush = bind(loadBrush, this);
         this.new_brush = EM_Module.cwrap("new_brush");
         this.reset_brush = EM_Module.cwrap("reset_brush");
-        this.set_brush_base_value = EM_Module.cwrap("set_brush_base_value", "void", ["string", "number"]);
-        this.set_brush_mapping_n = EM_Module.cwrap("set_brush_mapping_n", "void", ["string", "string", "number"]);
-        this.set_brush_mapping_point = EM_Module.cwrap("set_brush_mapping_point", "void", ["string", "string", "number", "number", "number"]);
+
+        // Using the slower ccall() method, because cwrap() has a weird bug on FF when using strings :(
+        this.set_brush_base_value = function(name, value) {
+            EM_Module.ccall("set_brush_base_value", "void", ["string", "number"], [name, value]);
+        };
+
+        this.set_brush_mapping_n = function(name, mapping, n) {
+            EM_Module.ccall("set_brush_mapping_n", "void", ["string", "string", "number"], [name, mapping, n]);
+        };
+
+        this.set_brush_mapping_point = function(name, mapping, index, x,y) {
+            EM_Module.ccall("set_brush_mapping_point", "void",
+                ["string", "string", "number", "number", "number"], [name, mapping, index, x,y]);
+        }
     };
 
 })(Module);
